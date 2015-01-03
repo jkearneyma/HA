@@ -1,7 +1,10 @@
+#ifndef USB_H
+#define USB_H
+
 #include <memory>
 #include <set>
-#include <string>
 #include <cstdint>
+#include <QString>
 
 struct libusb_context;
 struct libusb_device;
@@ -12,7 +15,7 @@ struct USB {
 	~USB();
 
 	struct DeviceList {
-		std::set<struct libusb_device *> devices;
+		std::set<libusb_device *> devices;
 
 		DeviceList(
 			USB &,
@@ -28,13 +31,17 @@ private:
 };
 
 struct Device {
-	Device(struct libusb_device *);
+	Device(libusb_device *);
 	~Device();
-	std::string manufacturer, product, serialNumber;
+
+	QString manufacturer, product, serialNumber;
+
+	libusb_device_handle *get() const { return handle; }
 
 protected:
 	libusb_device_handle *handle;
 
-	std::string get_string(size_t maxLen, uint8_t index) const;
+	QString get_string(size_t maxLen, uint8_t index) const;
 };
 
+#endif

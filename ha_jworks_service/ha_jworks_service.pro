@@ -16,10 +16,12 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp \
-    usb.cpp
+    usb.cpp \
+    jdb_dio.cpp
 
 HEADERS += \
-    usb.h
+    usb.h \
+    jsb_dio.h
 
 unix:!macx: LIBS += -L/usr/lib/ -lusb-1.0
 

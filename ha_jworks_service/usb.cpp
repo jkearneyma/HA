@@ -55,11 +55,14 @@ Device::Device(
 
 }
 
-string Device::get_string(size_t maxLen, uint8_t index) const {
-	unsigned char buffer[maxLen];
-	int len = libusb_get_string_descriptor_ascii(handle, index, &buffer[0], maxLen);
+QString Device::get_string(
+	size_t maxLen,
+	uint8_t index
+) const {
+	unsigned char buffer[maxLen + 1];
+	int len = libusb_get_string_descriptor_ascii(handle, index, &buffer[0], maxLen + 1);
 	if (len < 0) throw libusb_error_name(len);
-	return string(&buffer[0], &buffer[0] + len);
+	return QString::fromUtf8(reinterpret_cast<const char *>(buffer));
 }
 
 Device::~Device() {

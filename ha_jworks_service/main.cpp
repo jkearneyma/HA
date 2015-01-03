@@ -2,8 +2,17 @@
 #include <QtDBus>
 
 #include <iostream>
+#include <memory>
 
 #include "usb.h"
+#include "jsb_dio.h"
+
+namespace {
+JSBDesc boards[] = {
+	{ "JSB342", 0x1400, 4, 4, 0, 8, 0xb9, 0xc1, 0xc0, 0xb5, 0xb2 },
+	{ "JSB394", 0x8383, 8, 0, 0, 8, 0xb9,    0,    0,    0, 0xb2 }
+};
+}
 
 int main(int argc, char *argv[])
 {
@@ -23,7 +32,20 @@ int main(int argc, char *argv[])
     }
 
     USB usb;
-    USB::DeviceList dl1(usb, 1, 1);
+	QTimer *timer = new QTimer(&a);
+	for (auto &board : boards) {
+		USB::DeviceList list(usb, 0x07c3, board.productId);
+		for (auto device : list.devices) {
+			auto controller = new JSB_DIO(board, std::unique_ptr<Device>(new Device(device)), &a);
+			a.connect(timer, SIGNAL(timeout()), controller, SLOT(update()));
+			QDBusConnection::sessionBus().registerObject(
+				"/",
+				controller,
+				QDBusConnection::ExportAllSlots | QDBusConnection::ExportAllSignals
+			);
+		}
+	}
+	timer->start(200); // 5x / second
 
-    return a.exec();
+	return a.exec();
 }
