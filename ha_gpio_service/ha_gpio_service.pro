@@ -4,12 +4,12 @@
 #
 #-------------------------------------------------
 
-QT       += core
+QT       += core dbus
 
 QT       -= gui
 
 TARGET = ha_gpio_service
-CONFIG   += console
+CONFIG   += console c++11
 CONFIG   -= app_bundle
 
 TEMPLATE = app
