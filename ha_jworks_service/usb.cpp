@@ -1,56 +1,68 @@
-#include "usb.hpp"
-#include <usb.h>
+#include "usb.h"
+
+#include <libusb-1.0/libusb.h>
 
 #include <iostream>
 
 using namespace std;
 
-USB::USB() {
-	//usb_set_debug(2);
-	usb_init();
-	usb_find_busses();
-	usb_find_devices();
-	list = usb_get_busses();
-	if (!list) throw usb_strerror();
+USB::USB() : context(nullptr) {
+	//libusb_set_debug(2);
+	libusb_init(&context);
 }
 
 USB::~USB() {
+	libusb_exit(context);
 }
 
-map<struct usb_device_descriptor *, struct usb_device *>
-USB::find(uint32_t vendor, uint32_t id) const {
-	map<struct usb_device_descriptor *, struct usb_device *> ret;
-	for (auto bus = list; bus; bus = bus->next) {
-		for (auto dev = bus->devices; dev; dev = dev->next) {
-			auto desc = &dev->descriptor;
-			if (((vendor == 0) || (desc->idVendor == vendor)) &&
-				((id == 0) || (desc->idProduct == id))) {
-				ret[desc] = dev;
-			}
+USB::DeviceList::DeviceList(
+	USB &usb,
+	uint32_t vendor,
+	uint32_t product
+) {
+	libusb_device **list = nullptr;
+	ssize_t count = libusb_get_device_list(usb.context, &list);
+	for (ssize_t i = 0; i < count; ++i) {
+		libusb_device_descriptor desc;
+		libusb_get_device_descriptor(list[i], &desc);
+		if (((vendor == 0) || (vendor == desc.idVendor))
+			&& ((product == 0) || (product == desc.idProduct))) {
+			libusb_ref_device(list[i]);
+			devices.insert(list[i]);
 		}
 	}
-	return ret;
+	libusb_free_device_list(list, 1);
 }
 
-Device::Device(struct usb_device_descriptor *desc, struct usb_device *dev) {
-	handle = usb_open(dev);
-	if (!handle) throw "failed to open USB device";
-	if (usb_set_configuration(handle, 1)) throw usb_strerror();
-	if (usb_claim_interface(handle, 0)) throw usb_strerror();
-	manufacturer = get_string(desc->bLength, desc->iManufacturer);
-	product = get_string(desc->bLength, desc->iProduct);
-	serialNumber = get_string(desc->bLength, desc->iSerialNumber);
+USB::DeviceList::~DeviceList() {
+	for (auto device : devices) {
+		libusb_unref_device(device);
+	}
 }
 
-Device::~Device() {
-	usb_release_interface(handle, 0);
-	usb_close(handle);
+Device::Device(
+	libusb_device *device
+) :
+	handle(nullptr)
+{
+	int err = libusb_open(device, &handle);
+	if (!handle) throw libusb_error_name(err);
+	libusb_device_descriptor desc;
+	libusb_get_device_descriptor(device, &desc);
+	manufacturer = get_string(desc.bLength, desc.iManufacturer);
+	product = get_string(desc.bLength, desc.iProduct);
+	serialNumber = get_string(desc.bLength, desc.iSerialNumber);
+
 }
 
 string Device::get_string(size_t maxLen, uint8_t index) const {
-	char buffer[maxLen];
-	int len = usb_get_string_simple(handle, index, &buffer[0], maxLen);
-	if (len < 0) throw usb_strerror();
+	unsigned char buffer[maxLen];
+	int len = libusb_get_string_descriptor_ascii(handle, index, &buffer[0], maxLen);
+	if (len < 0) throw libusb_error_name(len);
 	return string(&buffer[0], &buffer[0] + len);
+}
+
+Device::~Device() {
+	libusb_close(handle);
 }
 

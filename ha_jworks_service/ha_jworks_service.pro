@@ -4,15 +4,24 @@
 #
 #-------------------------------------------------
 
-QT       += core
+QT       += core dbus
 
 QT       -= gui
 
 TARGET = ha_jworks_service
-CONFIG   += console
+CONFIG   += console c++11
 CONFIG   -= app_bundle
 
 TEMPLATE = app
 
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    usb.cpp
+
+HEADERS += \
+    usb.h
+
+unix:!macx: LIBS += -L/usr/lib/ -lusb-1.0
+
+INCLUDEPATH += /usr/include
+DEPENDPATH += /usr/include
