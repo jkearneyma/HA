@@ -1,5 +1,8 @@
 #include <QCoreApplication>
 #include <QtDBus>
+
+#include <iostream>
+
 #include "timers.h"
 
 int main(int argc, char *argv[])

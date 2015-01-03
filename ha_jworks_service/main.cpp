@@ -1,6 +1,8 @@
 #include <QCoreApplication>
 #include <QtDBus>
 
+#include <iostream>
+
 #include "usb.h"
 
 int main(int argc, char *argv[])

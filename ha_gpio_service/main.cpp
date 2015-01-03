@@ -1,6 +1,8 @@
 #include <QCoreApplication>
 #include <QtDBus>
 
+#include <iostream>
+
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);

@@ -14,7 +14,7 @@ Timers::~Timers() {
     timer->stop();
 }
 
-void Timers::setTimer(QString name, size_t seconds) {
+void Timers::setTimer(QString name, uint seconds) {
     active[name] = seconds;
 }
 
