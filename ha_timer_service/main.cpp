@@ -13,8 +13,9 @@ int main(int argc, char *argv[])
     }
 
     if (!QDBusConnection::sessionBus().registerService("com.jkearney.ha.Timers")) {
-        fprintf(stderr, "%s\n",
-                qPrintable(QDBusConnection::sessionBus().lastError().message()));
+        std::cerr
+            << qPrintable(QDBusConnection::sessionBus().lastError().message())
+            << "\n";
         return EXIT_FAILURE;
     }
 
