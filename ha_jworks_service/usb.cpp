@@ -2,7 +2,7 @@
 
 #include <libusb-1.0/libusb.h>
 
-#include <iostream>
+#include <stdexcept>
 
 using namespace std;
 
@@ -46,7 +46,7 @@ Device::Device(
 	handle(nullptr)
 {
 	int err = libusb_open(device, &handle);
-	if (!handle) throw libusb_error_name(err);
+	if (!handle) throw std::runtime_error(libusb_error_name(err));
 	libusb_device_descriptor desc;
 	libusb_get_device_descriptor(device, &desc);
 	manufacturer = get_string(desc.bLength, desc.iManufacturer);
@@ -61,7 +61,7 @@ QString Device::get_string(
 ) const {
 	unsigned char buffer[maxLen + 1];
 	int len = libusb_get_string_descriptor_ascii(handle, index, &buffer[0], maxLen + 1);
-	if (len < 0) throw libusb_error_name(len);
+	if (len < 0) throw std::runtime_error(libusb_error_name(len));
 	return QString::fromUtf8(reinterpret_cast<const char *>(buffer));
 }
 

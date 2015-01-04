@@ -7,10 +7,15 @@
 #include "usb.h"
 #include "jsb_dio.h"
 
+// if USB devices cannot be accessed, make sure that there is a rule
+// in /etc/udev/rules.d/some-file.rule with
+//   SUBSYSTEMS=="usb", ATTRS{idVendor}=="07c3", GROUP:="users"
+// and that the current user is in group users.
+
 namespace {
 JSBDesc boards[] = {
-	{ "JSB342", 0x1400, 4, 4, 0, 8, 0xb9, 0xc1, 0xc0, 0xb5, 0xb2 },
-	{ "JSB394", 0x8383, 8, 0, 0, 8, 0xb9,    0,    0,    0, 0xb2 }
+	{ "JSB342", 0x1400, 4, 4, 0, 8, 0xb9, 0xb1, 0xb5, 0xb2 },
+	{ "JSB394", 0x8383, 8, 0, 0, 8, 0xb9,    0,    0, 0xb2 }
 };
 }
 
@@ -38,11 +43,6 @@ int main(int argc, char *argv[])
 		for (auto device : list.devices) {
 			auto controller = new JSB_DIO(board, std::unique_ptr<Device>(new Device(device)), &a);
 			a.connect(timer, SIGNAL(timeout()), controller, SLOT(update()));
-			QDBusConnection::sessionBus().registerObject(
-				"/",
-				controller,
-				QDBusConnection::ExportAllSlots | QDBusConnection::ExportAllSignals
-			);
 		}
 	}
 	timer->start(200); // 5x / second

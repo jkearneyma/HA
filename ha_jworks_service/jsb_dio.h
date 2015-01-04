@@ -11,8 +11,7 @@ struct JSBDesc {
 	uint8_t numInputs, numOutputs, numDIO;
 	size_t JW_returnSize;
 	uint8_t JW_flashLedCmd;
-	uint8_t JW_clearRelayCmd;
-	uint8_t JW_setRelayCmd;
+	uint8_t JW_setRelaysCmd;
 	uint8_t JW_relayStateCmd;
 	uint8_t JW_ReadInCmd;
 	// TODO:
@@ -29,7 +28,7 @@ class JSB_DIO : public QObject
 	Q_OBJECT
 	const JSBDesc board;
 	std::unique_ptr<Device> device;
-	uint8_t lastInputs;
+	uint8_t lastInputs, lastOutputs;
 public:
 	JSB_DIO(
 		const JSBDesc &board,
