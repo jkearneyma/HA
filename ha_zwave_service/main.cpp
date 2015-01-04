@@ -3,11 +3,6 @@
 
 #include <iostream>
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-parameter"
-#pragma clang diagnostic ignored "-Wignored-qualifiers"
-#include "Manager.h"
-#pragma clang diagnostic pop
 
 int main(int argc, char *argv[])
 {
@@ -26,7 +21,7 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    std::clog << "Open-ZWave version: " << OpenZWave::Manager::getVersionAsString() << "\n";
+//    std::clog << "Open-ZWave version: " << OpenZWave::Manager::getVersionAsString() << "\n";
 
     return a.exec();
 }

@@ -15,7 +15,8 @@ CONFIG   -= app_bundle
 TEMPLATE = app
 
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    zwave.cpp
 
 unix:!macx: LIBS += -L$$PWD/../open-zwave/ -lopenzwave
 
@@ -25,3 +26,6 @@ DEPENDPATH += $$PWD/../open-zwave/cpp/src
 unix:!macx: PRE_TARGETDEPS += $$PWD/../open-zwave/libopenzwave.so
 
 unix:!macx:QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN/../open-zwave\',-z,origin'
+
+HEADERS += \
+    zwave.h
