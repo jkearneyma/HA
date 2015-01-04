@@ -6,17 +6,24 @@
 class zwave : public QObject
 {
     Q_OBJECT
+    QString device;
 public:
     explicit zwave(QString device, QObject *parent = 0);
     ~zwave();
 
 signals:
-	void stateChange(QString id, int newState);
-	void announce(QString info);
+	void stateChange(QString service, QString id, QString newState);
+	void announce(QString service, QString info);
 
 public slots:
-	void setState(QString id, int toState);
-	void update();
+	void updateState(QString service, QString id);
+	void setState(QString service, QString id, QString toState);
+	void healNetwork(bool doRR);
+
+private slots:
+	// internal use
+	void queueAnnounce(QString);
+	void queueStateChange(QString, QString);
 };
 
 #endif // ZWAVE_H

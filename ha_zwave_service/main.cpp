@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    /*auto z = */ new zwave(
+    /*auto z = */new zwave(
         settings.value("zwave/device", "/dev/ttyUSB0").toString(),
         &a
     );

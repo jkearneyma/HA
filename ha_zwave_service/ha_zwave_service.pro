@@ -25,7 +25,7 @@ DEPENDPATH += $$PWD/../open-zwave/cpp/src
 
 unix:!macx: PRE_TARGETDEPS += $$PWD/../open-zwave/libopenzwave.so
 
-unix:!macx:QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN/../open-zwave\',-z,origin'
+unix:!macx:QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN\',-z,origin'
 
 HEADERS += \
     zwave.h

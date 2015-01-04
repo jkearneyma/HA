@@ -31,36 +31,39 @@ JSB_DIO::JSB_DIO(
 		returnData, board.JW_returnSize, 0
 	);
 	// announce the device
-	emit announce(QString(
-		"JWORKS_" + device->serialNumber
+	emit announce(
+		"JWORKS",
+		device->serialNumber
 		+ " inputs=" + QString::number(board.numInputs)
 		+ " outputs=" + QString::number(board.numOutputs)
 		+ " dio=" + QString::number(board.numDIO)
-	));
+	);
 }
 
 JSB_DIO::~JSB_DIO() {
 }
 
 void JSB_DIO::setState(
+	QString service,
 	QString id,
-	int toState
+	QString toState
 ) {
-	uint number = 0;
+	uint number = 0, value = 0;
 	bool parseOk = false;
 	auto parsed = id.split("_");
 	if (
-		(parsed.size() == 4)
-		&& (parsed[0] == "JWORKS")
-		&& (parsed[1] == device->serialNumber)
-		&& ((number = parsed[3].toUInt(&parseOk)), parseOk)
+		(parsed.size() == 3)
+		&& (service == "JWORKS")
+		&& (parsed[0] == device->serialNumber)
+		&& ((number = parsed[2].toUInt(&parseOk)), parseOk)
+		&& ((value = toState.toUInt(&parseOk)), parseOk)
 	) {
 		uint8_t relay = uint16_t(1) << number;
-		uint8_t newOutputs = (toState != 0)
+		uint8_t newOutputs = (value != 0)
 			? (lastOutputs | relay)
 			: (lastOutputs & ~relay);
 		unsigned char returnData[board.JW_returnSize];
-		if ((parsed[2] == "O") && (number < board.numOutputs)) {
+		if ((parsed[1] == "O") && (number < board.numOutputs)) {
 			libusb_control_transfer(
 				device->get(),
 				LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_VENDOR | LIBUSB_RECIPIENT_ENDPOINT,
@@ -68,14 +71,12 @@ void JSB_DIO::setState(
 				returnData, board.JW_returnSize, 0
 			);
 		}
-//		else if ((parsed[2] == "D") && (board.JW_setOutByBankCmd != 0)) {
+//		else if ((parsed[1] == "D") && (board.JW_setOutByBankCmd != 0)) {
 //		}
 	}
 }
 
 void JSB_DIO::update() {
-	QString baseId( "JWORKS_" + device->serialNumber + "_" );
-
 	auto report = [&](uint8_t cmd, QString type, uint8_t &prev, uint8_t count) {
 		if (count < 1) return;
 		unsigned char returnData[board.JW_returnSize];
@@ -90,10 +91,11 @@ void JSB_DIO::update() {
 		std::swap(value, prev);
 		uint8_t changed = value ^ prev;
 
+		QString baseId( device->serialNumber + "_" + type + "_");
 		for (int n = 0; n < count; ++n, changed >>= 1, value >>= 1) {
 			if ((changed & 1) != 0) {
-				auto id = baseId + type + "_" + QString::number(n);
-				emit stateChange(id, value & 1);
+				auto id = baseId + QString::number(n);
+				emit stateChange("JWORKS", id, (value & 1) ? "1" : "0");
 			}
 		}
 	};

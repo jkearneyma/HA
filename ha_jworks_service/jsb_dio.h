@@ -42,12 +42,12 @@ public:
 	~JSB_DIO();
 
 signals:
-	void stateChange(QString id, int newState);
-	void announce(QString info);
+	void stateChange(QString service, QString id, QString value);
+	void announce(QString service, QString info);
 
 public slots:
 	//void setDirection(QString id, bool isOutput);
-	void setState(QString id, int toState);
+	void setState(QString service, QString id, QString value);
 	void update();
 };
 
