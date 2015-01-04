@@ -5,6 +5,10 @@
 #include "usb.h"
 #include <memory>
 
+// currently just handles single-byte inputs and outputs...
+// this structure would have to be more complicated to handle more
+// complex devices.  Alternatively, additional handler classes could be
+// made.
 struct JSBDesc {
 	const char *name;
 	uint16_t productId;
@@ -38,12 +42,12 @@ public:
 	~JSB_DIO();
 
 signals:
-	void stateChange(QString id, bool newState);
+	void stateChange(QString id, int newState);
 	void announce(QString info);
 
 public slots:
 	//void setDirection(QString id, bool isOutput);
-	void setState(QString id, bool toState);
+	void setState(QString id, int toState);
 	void update();
 };
 

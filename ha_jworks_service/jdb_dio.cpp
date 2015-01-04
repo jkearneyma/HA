@@ -44,7 +44,7 @@ JSB_DIO::~JSB_DIO() {
 
 void JSB_DIO::setState(
 	QString id,
-	bool toState
+	int toState
 ) {
 	uint number = 0;
 	bool parseOk = false;
@@ -56,7 +56,9 @@ void JSB_DIO::setState(
 		&& ((number = parsed[3].toUInt(&parseOk)), parseOk)
 	) {
 		uint8_t relay = uint16_t(1) << number;
-		uint8_t newOutputs = toState ? (lastOutputs | relay) : (lastOutputs & ~relay);
+		uint8_t newOutputs = (toState != 0)
+			? (lastOutputs | relay)
+			: (lastOutputs & ~relay);
 		unsigned char returnData[board.JW_returnSize];
 		if ((parsed[2] == "O") && (number < board.numOutputs)) {
 			libusb_control_transfer(
@@ -91,7 +93,7 @@ void JSB_DIO::update() {
 		for (int n = 0; n < count; ++n, changed >>= 1, value >>= 1) {
 			if ((changed & 1) != 0) {
 				auto id = baseId + type + "_" + QString::number(n);
-				emit stateChange(id, (value & 1) == 0);
+				emit stateChange(id, value & 1);
 			}
 		}
 	};
