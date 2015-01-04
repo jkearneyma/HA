@@ -15,12 +15,22 @@
 #include "platform/Log.h"
 #pragma clang diagnostic pop
 
-zwave::zwave(QObject *parent) : QObject(parent)
+zwave::zwave(QString device, QObject *parent) : QObject(parent)
 {
 
 }
 
 zwave::~zwave()
+{
+
+}
+
+void zwave::setState(QString id, int toState)
+{
+
+}
+
+void zwave::update()
 {
 
 }

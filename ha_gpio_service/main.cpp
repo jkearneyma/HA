@@ -3,9 +3,12 @@
 
 #include <iostream>
 
+#include "../ha_common.h"
+
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
+    setAppDefaults(a);
 
     if (!QDBusConnection::sessionBus().isConnected()) {
         qWarning("Cannot connect to the D-Bus session bus.\n"
@@ -13,7 +16,7 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    if (!QDBusConnection::sessionBus().registerService("com.jkearney.ha.GPIO")) {
+    if (!QDBusConnection::sessionBus().registerService(DBUS_PFX "GPIO")) {
         std::cerr
             << qPrintable(QDBusConnection::sessionBus().lastError().message())
             << "\n";

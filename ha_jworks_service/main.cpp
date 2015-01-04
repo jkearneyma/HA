@@ -4,6 +4,7 @@
 #include <iostream>
 #include <memory>
 
+#include "../ha_common.h"
 #include "usb.h"
 #include "jsb_dio.h"
 
@@ -27,6 +28,7 @@ JSBDesc boards[] = {
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
+    setAppDefaults(a);
 
     if (!QDBusConnection::sessionBus().isConnected()) {
         qWarning("Cannot connect to the D-Bus session bus.\n"
@@ -34,7 +36,7 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    if (!QDBusConnection::sessionBus().registerService("com.jkearney.ha.JWorks")) {
+    if (!QDBusConnection::sessionBus().registerService(DBUS_PFX "JWorks")) {
         std::cerr
             << qPrintable(QDBusConnection::sessionBus().lastError().message())
             << "\n";
