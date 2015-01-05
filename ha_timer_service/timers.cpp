@@ -2,6 +2,8 @@
 
 #include <QHashIterator>
 
+static QString TIMER("TIMER");
+
 Timers::Timers(QObject *parent) :
     QObject(parent)
 {
@@ -14,13 +16,26 @@ Timers::~Timers() {
     timer->stop();
 }
 
-void Timers::setTimer(QString name, uint seconds) {
-    active[name] = seconds;
+void Timers::setState(
+	QString service,
+	QString id,
+	QString value
+) {
+	bool parseOk = false;
+	int seconds = value.toInt(&parseOk);
+	if (parseOk && (service == "TIMER")) {
+		if (seconds <= 0) active.remove(id);
+		else active[id] = seconds;
+	}
 }
 
-void Timers::CancelTimer(QString name) {
-    active.remove(name);
-    emit timerWasCancelled(name);
+void Timers::updateState(
+	QString service,
+	QString id
+) {
+	if ((service == TIMER) && active.contains(id)) {
+		emit stateChange(TIMER, id, QString::number(active[id]));
+	}
 }
 
 void Timers::tick() {
@@ -32,6 +47,6 @@ void Timers::tick() {
     }
     for (auto &c : expired) {
         active.remove(c);
-        emit timerExpired(c);
+        emit stateChange(TIMER, c, "0");
     }
 }

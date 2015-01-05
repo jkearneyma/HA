@@ -16,12 +16,12 @@ public:
     ~Timers();
 
 signals:
-    void timerExpired(QString name);
-    void timerWasCancelled(QString name);
+    void announce(QString service, QString info);
+    void stateChange(QString service, QString id, QString value);
 
 public slots:
-    Q_NOREPLY void setTimer(QString name, uint seconds);
-    Q_NOREPLY void CancelTimer(QString name);
+    void setState(QString service, QString id, QString value);
+	void updateState(QString service, QString id);
 
 private slots:
     void tick();
