@@ -28,9 +28,9 @@ int main(int argc, char *argv[])
 
     /*auto z = */new zwave(
         settings.value("zwave/device", "/dev/ttyUSB0").toString(),
+        settings.value("zwave/loglevel", "3").toUInt(),
         &a
     );
-//    std::clog << "Open-ZWave version: " << OpenZWave::Manager::getVersionAsString() << "\n";
 
     return a.exec();
 }

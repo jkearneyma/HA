@@ -94,7 +94,10 @@ void OnNotification(Notification const* notification, void* context) {
 		break;
 
 	case Notification::Type_DriverRemoved:
-		exited.release();
+		homeIds.erase(notification->GetHomeId());
+		if (homeIds.empty()) {
+			exited.release();
+		}
 		break;
 
 	case Notification::Type_ValueAdded:
@@ -149,6 +152,7 @@ void OnNotification(Notification const* notification, void* context) {
 
 zwave::zwave(
     QString device_,
+    int logLevel,
     QObject *parent
 ) :
   QObject(parent),
@@ -161,7 +165,7 @@ zwave::zwave(
 	);
 
 	auto options = Options::Create("./config/", "./", "");
-	options->AddOptionInt("SaveLogLevel", LogLevel_Info);
+	options->AddOptionInt("SaveLogLevel", LogLevel(logLevel));
 	options->AddOptionInt("QueueLogLevel", LogLevel_Alert);
 	options->AddOptionInt("DumpTriggerLevel", LogLevel_Error);
 	options->AddOptionInt("PollInterval", 100);
@@ -174,6 +178,7 @@ zwave::zwave(
 
 	auto manager = Manager::Create();
 	manager->AddWatcher(OnNotification, this);
+	// TODO: should be an array
 	manager->AddDriver(device.toUtf8().data());
 
 	queueAnnounce(
@@ -184,6 +189,7 @@ zwave::zwave(
 zwave::~zwave() {
 	Manager *manager = Manager::Get();
 	if (manager!= nullptr) {
+		// TODO: should be an array
 		Manager::Get()->RemoveDriver(device.toUtf8().data());
 		exited.acquire();
 		Manager::Get()->RemoveWatcher(OnNotification, manager);
@@ -251,11 +257,21 @@ void zwave::setState(QString service, QString id, QString value)
 	}
 }
 
-void zwave::healNetwork(bool doRR)
-{
+void zwave::healNetwork(bool doRR) {
 	for (auto homeId : homeIds) {
 		Manager::Get()->HealNetwork(homeId, doRR);
 	}
+}
+
+void zwave::writeConfigs() {
+	for (auto homeId : homeIds) {
+		Manager::Get()->WriteConfig(homeId);
+	}
+}
+
+void zwave::kill()
+{
+	QCoreApplication::exit();
 }
 
 void zwave::queueAnnounce(QString msg) {
