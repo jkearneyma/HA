@@ -20,8 +20,8 @@ INCLUDEPATH += $$PWD/../open-zwave/cpp/src
 DEPENDPATH += $$PWD/../open-zwave/cpp/src
 
 unix:!macx: PRE_TARGETDEPS += $$PWD/../open-zwave/libopenzwave.so
-
 unix:!macx:QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN\',-z,origin'
+unix:!macx:QMAKE_POST_LINK += $(COPY_FILE) -a $$PWD/../open-zwave/libopenzwave.so* ./
 
 HEADERS += \
     zwave.h
