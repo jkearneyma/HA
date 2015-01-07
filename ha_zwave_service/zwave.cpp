@@ -151,6 +151,7 @@ void OnNotification(Notification const* notification, void* context) {
 } // namespace
 
 zwave::zwave(
+    QString exePath,
     QString device_,
     int logLevel,
     QObject *parent
@@ -164,7 +165,13 @@ zwave::zwave(
 		QDBusConnection::ExportAllSlots | QDBusConnection::ExportAllSignals
 	);
 
-	auto options = Options::Create("./config/", "./", "");
+	auto configDir = exePath + "/config/";
+	auto zwcfgDir = exePath + "/";
+	auto options = Options::Create(
+		configDir.toUtf8().data(),
+		zwcfgDir.toUtf8().data(),
+		""
+	);
 	options->AddOptionInt("SaveLogLevel", LogLevel(logLevel));
 	options->AddOptionInt("QueueLogLevel", LogLevel_Alert);
 	options->AddOptionInt("DumpTriggerLevel", LogLevel_Error);

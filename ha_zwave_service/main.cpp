@@ -27,6 +27,7 @@ int main(int argc, char *argv[])
     }
 
     /*auto z = */new zwave(
+        a.applicationDirPath(),
         settings.value("zwave/device", "/dev/ttyUSB0").toString(),
         settings.value("zwave/loglevel", "3").toUInt(),
         &a

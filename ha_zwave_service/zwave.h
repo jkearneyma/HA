@@ -8,7 +8,12 @@ class zwave : public QObject
     Q_OBJECT
     QString device;
 public:
-    explicit zwave(QString device, int loglevel, QObject *parent = 0);
+    explicit zwave(
+        QString exePath,
+        QString device,
+        int loglevel,
+        QObject *parent = 0
+    );
     ~zwave();
 
 signals:

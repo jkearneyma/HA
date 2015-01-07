@@ -29,3 +29,7 @@ zwave_libs.path = $$DESTDIR
 zwave_libs.files = $$PWD/../open-zwave/libopenzwave.so.*
 INSTALLS += zwave_libs
 
+zwave_configs.path = $$DESTDIR
+zwave_configs.files = $$PWD/../open-zwave/config
+INSTALLS += zwave_configs
+
