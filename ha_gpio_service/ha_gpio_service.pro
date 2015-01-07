@@ -4,16 +4,11 @@
 #
 #-------------------------------------------------
 
-QT       += core dbus
-
-QT       -= gui
+!include( ../common.pri ) {
+    error("Couldn't find the common.pri file!")
+}
 
 TARGET = ha_gpio_service
-CONFIG   += console c++11
-CONFIG   -= app_bundle
-
-TEMPLATE = app
-
 
 SOURCES += main.cpp
 

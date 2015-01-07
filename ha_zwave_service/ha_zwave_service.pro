@@ -4,16 +4,12 @@
 #
 #-------------------------------------------------
 
-QT       += core dbus
-
-QT       -= gui
-
+DBUS_ID = ZWave
 TARGET = ha_zwave_service
-CONFIG   += console c++11
-CONFIG   -= app_bundle
 
-TEMPLATE = app
-
+!include( ../common.pri ) {
+    error("Couldn't find the common.pri file!")
+}
 
 SOURCES += main.cpp \
     zwave.cpp
@@ -29,3 +25,8 @@ unix:!macx:QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN\',-z,origin'
 
 HEADERS += \
     zwave.h
+
+zwave_libs.path = $$DESTDIR
+zwave_libs.files = $$PWD/../open-zwave/libopenzwave.so.*
+INSTALLS += zwave_libs
+

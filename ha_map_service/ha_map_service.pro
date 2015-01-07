@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2015-01-01T22:53:52
+# Project created by QtCreator 2015-01-07T13:09:05
 #
 #-------------------------------------------------
 
@@ -8,10 +8,6 @@
     error("Couldn't find the common.pri file!")
 }
 
-TARGET = ha_timer_service
+TARGET = ha_map_service
 
-SOURCES += main.cpp \
-    timers.cpp
-
-HEADERS += \
-    timers.h
+SOURCES += main.cpp
