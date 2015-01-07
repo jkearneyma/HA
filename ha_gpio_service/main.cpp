@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    if (!QDBusConnection::sessionBus().registerService(DBUS_PFX "GPIO")) {
+    if (!QDBusConnection::sessionBus().registerService(DBUS_PFX DBUS_ID)) {
         std::cerr
             << qPrintable(QDBusConnection::sessionBus().lastError().message())
             << "\n";

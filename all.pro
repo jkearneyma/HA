@@ -3,6 +3,7 @@
 }
 
 TEMPLATE = subdirs
+
 SUBDIRS = \
     ha_jworks_service \
     ha_zwave_service \

@@ -4,6 +4,8 @@
 #
 #-------------------------------------------------
 
+DBUS_ID = GPIO
+
 !include( ../common.pri ) {
     error("Couldn't find the common.pri file!")
 }

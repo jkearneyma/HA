@@ -23,7 +23,7 @@ void Timers::setState(
 ) {
 	bool parseOk = false;
 	int seconds = value.toInt(&parseOk);
-	if (parseOk && (service == "TIMER")) {
+	if (parseOk && (service == TIMER)) {
 		if (seconds <= 0) active.remove(id);
 		else active[id] = seconds;
 	}
