@@ -26,3 +26,4 @@ build-*
 *.qmlproject.user
 *.qmlproject.user.*
 open-zwave
+wiringPi

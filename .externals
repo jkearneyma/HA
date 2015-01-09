@@ -5,3 +5,8 @@ scm = git
 repository = http://open-zwave.googlecode.com/svn/trunk
 scm = svn
 path = open-zwave
+
+[wiringPi]
+repository = git://github.com/hardkernel/wiringPi
+scm = git
+path = wiringPi
