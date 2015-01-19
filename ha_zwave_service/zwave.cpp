@@ -172,8 +172,9 @@ zwave::zwave(
 		zwcfgDir.toUtf8().data(),
 		""
 	);
+	// probably should do this all via options.xml?
 	options->AddOptionInt("SaveLogLevel", LogLevel(logLevel));
-	options->AddOptionInt("QueueLogLevel", LogLevel_Alert);
+	options->AddOptionInt("QueueLogLevel", LogLevel_Info);
 	options->AddOptionInt("DumpTriggerLevel", LogLevel_Error);
 	options->AddOptionInt("PollInterval", 100);
 	options->AddOptionBool("IntervalBetweenPolls", true);

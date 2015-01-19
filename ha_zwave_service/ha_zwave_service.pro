@@ -14,22 +14,14 @@ TARGET = ha_zwave_service
 SOURCES += main.cpp \
     zwave.cpp
 
-unix:!macx: LIBS += -L$$PWD/../open-zwave/ -lopenzwave
+unix:!macx: LIBS += -lopenzwave
 
-INCLUDEPATH += $$PWD/../open-zwave/cpp/src
-DEPENDPATH += $$PWD/../open-zwave/cpp/src
-
-unix:!macx: PRE_TARGETDEPS += $$PWD/../open-zwave/libopenzwave.so
-unix:!macx:QMAKE_LFLAGS += '-Wl,-rpath,\'\$$ORIGIN\',-z,origin'
+INCLUDEPATH += /usr/local/include/openzwave
 
 HEADERS += \
     zwave.h
 
-zwave_libs.path = $$DESTDIR
-zwave_libs.files = $$PWD/../open-zwave/libopenzwave.so.*
-INSTALLS += zwave_libs
-
-zwave_configs.path = $$DESTDIR
-zwave_configs.files = $$PWD/../open-zwave/config
-INSTALLS += zwave_configs
-
+config_dir.target = config
+config_dir.commands = cp -ur ../open-zwave/config $$DESTDIR
+QMAKE_EXTRA_TARGETS += config_dir
+PRE_TARGETDEPS += $${config_dir.target}

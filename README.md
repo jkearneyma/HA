@@ -15,3 +15,18 @@ My hardware target is:
 - various J-Works USB interfaces (http://www.j-works.com/index.php)
 
 Though almost any Linux system with D-Bus available should work.
+
+There are some external libraries used:
+  open-zwave
+  wiringPi (port to ODROID-C1)
+
+These are added to the source tree using a tool called 'ext'.  ext is a Ruby program, so install ruby and then use the command 'gem install ext' to add it to the system.  
+
+build instructions:
+
+ext update
+( cd open-zwave ; make ; sudo make install )
+( cd wiringPi ; ./build ; sudo make install )
+qmake all.pro
+make
+
