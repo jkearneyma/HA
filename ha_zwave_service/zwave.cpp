@@ -159,12 +159,6 @@ zwave::zwave(
   QObject(parent),
   device(device_)
 {
-	QDBusConnection::sessionBus().registerObject(
-		"/",
-		this,
-		QDBusConnection::ExportAllSlots | QDBusConnection::ExportAllSignals
-	);
-
 	auto configDir = exePath + "/config/";
 	auto zwcfgDir = exePath + "/";
 	auto options = Options::Create(
@@ -189,9 +183,9 @@ zwave::zwave(
 	// TODO: should be an array
 	manager->AddDriver(device.toUtf8().data());
 
-	queueAnnounce(
-		QString("version=") + manager->getVersionAsString().c_str()
-	);
+//	queueAnnounce(
+//		QString("version=") + manager->getVersionAsString().c_str()
+//	);
 }
 
 zwave::~zwave() {
@@ -206,7 +200,7 @@ zwave::~zwave() {
 	}
 }
 
-void zwave::updateState(QString service, QString id) {
+void zwave::updateState(const QString &service, const QString &id) {
 	try {
 		auto manager = Manager::Get();
 		if ((manager != nullptr) && (service == "ZWAVE")) {
@@ -218,7 +212,7 @@ void zwave::updateState(QString service, QString id) {
 	}
 }
 
-void zwave::setState(QString service, QString id, QString value)
+void zwave::setState(const QString &service, const QString &id, const QString &value)
 {
 	try {
 		auto manager = Manager::Get();
@@ -282,11 +276,11 @@ void zwave::kill()
 	QCoreApplication::exit();
 }
 
-void zwave::queueAnnounce(QString msg) {
+void zwave::queueAnnounce(const QString &msg) {
 	emit announce("ZWAVE", msg);
 }
 
-void zwave::queueStateChange(QString id, QString value) {
+void zwave::queueStateChange(const QString &id, const QString &value) {
 	emit stateChange("ZWAVE", id, value);
 }
 

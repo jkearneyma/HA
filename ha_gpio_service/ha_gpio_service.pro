@@ -12,7 +12,8 @@ DBUS_ID = GPIO
 
 TARGET = ha_gpio_service
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    gpio.cpp
 
 HEADERS += \
-    ../ha_common.h
+    gpio.h

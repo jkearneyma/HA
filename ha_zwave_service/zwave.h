@@ -17,20 +17,20 @@ public:
     ~zwave();
 
 signals:
-	void stateChange(QString service, QString id, QString newState);
-	void announce(QString service, QString info);
+	void stateChange(const QString &service, const QString &id, const QString &newState);
+	void announce(const QString &service, const QString &info);
 
 public slots:
-	void updateState(QString service, QString id);
-	void setState(QString service, QString id, QString toState);
+	void updateState(const QString &service, const QString &id);
+	void setState(const QString &service, const QString &id, const QString &toState);
 	void healNetwork(bool doRR);
 	void writeConfigs();
 	void kill();
 
 private slots:
 	// internal use
-	void queueAnnounce(QString);
-	void queueStateChange(QString, QString);
+	void queueAnnounce(const QString &);
+	void queueStateChange(const QString &, const QString &);
 };
 
 #endif // ZWAVE_H

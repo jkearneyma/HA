@@ -1,0 +1,26 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+        "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node name="/com/jkearney/HA/automation">
+        <interface name="com.jkearney.HA.automation">
+                <method name="updateState">
+                    <arg name="module" type="s" direction="in"/>
+                    <arg name="addr" type="s" direction="in"/>
+                </method>
+                <method name="setState">
+                    <arg name="module" type="s" direction="in"/>
+                    <arg name="addr" type="s" direction="in"/>
+                    <arg name="value" type="s" direction="in"/>
+                </method>
+                <method name="kill"/>
+                <signal name="stateChange">
+                    <arg name="module" type="s" direction="out"/>
+                    <arg name="addr" type="s" direction="out"/>
+                    <arg name="value" type="s" direction="out"/>
+                </signal>
+                <signal name="announce">
+                    <arg name="module" type="s" direction="out"/>
+                    <arg name="msg" type="s" direction="out"/>
+                </signal>
+        </interface>
+</node>
+

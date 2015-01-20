@@ -17,6 +17,7 @@ SOURCES += main.cpp \
 unix:!macx: LIBS += -lopenzwave
 
 INCLUDEPATH += /usr/local/include/openzwave
+DEPENDPATH += /usr/local/include/openzwave
 
 HEADERS += \
     zwave.h

@@ -5,6 +5,7 @@
 #include <memory>
 
 #include "../ha_common.h"
+#include "automation_adaptor.h"
 #include "usb.h"
 #include "jsb_dio.h"
 
@@ -27,29 +28,35 @@ JSBDesc boards[] = {
 
 int main(int argc, char *argv[])
 {
+    USB usb; // scoped around application
+
     QCoreApplication a(argc, argv);
     setAppDefaults(a);
 
-    if (!QDBusConnection::sessionBus().isConnected()) {
+    auto bus = QDBusConnection::sessionBus();
+
+    if (!bus.isConnected()) {
         qWarning("Cannot connect to the D-Bus session bus.\n"
                  "Please check your system settings and try again.\n");
         return EXIT_FAILURE;
     }
 
-    if (!QDBusConnection::sessionBus().registerService(DBUS_PFX DBUS_ID)) {
-        std::cerr
-            << qPrintable(QDBusConnection::sessionBus().lastError().message())
-            << "\n";
-        return EXIT_FAILURE;
+    if (!bus.registerService(DBUS_PFX DBUS_ID)) {
+        qFatal(
+            "Failed to register: %s\n",
+            qUtf8Printable(bus.lastError().message())
+        );
     }
 
-    USB usb;
 	QTimer *timer = new QTimer(&a);
 	for (auto &board : boards) {
 		USB::DeviceList list(usb, 0x07c3, board.productId);
 		for (auto device : list.devices) {
 			auto controller = new JSB_DIO(board, std::unique_ptr<Device>(new Device(device)), &a);
-			a.connect(timer, SIGNAL(timeout()), controller, SLOT(update()));
+			new AutomationAdaptor(controller);
+			a.connect(timer, &QTimer::timeout, controller, &JSB_DIO::update);
+			bus.registerObject(INTERFACE, controller);
+			controller->doAnounce();
 		}
 	}
 	timer->start(200); // 5x / second

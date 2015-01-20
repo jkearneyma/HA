@@ -41,13 +41,16 @@ public:
 	);
 	~JSB_DIO();
 
+	void doAnounce();
 signals:
-	void stateChange(QString service, QString id, QString value);
-	void announce(QString service, QString info);
+    void announce(const QString &module, const QString &msg);
+    void stateChange(const QString &module, const QString &addr, const QString &value);
 
 public slots:
+	void kill();
 	//void setDirection(QString id, bool isOutput);
-	void setState(QString service, QString id, QString value);
+	void setState(const QString &module, const QString &addr, const QString &value);
+	void updateState(const QString &module, const QString &addr);
 	void update();
 };
 

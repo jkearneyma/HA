@@ -1,6 +1,7 @@
 #include "timers.h"
 
 #include <QHashIterator>
+#include <QCoreApplication>
 
 static QString TIMER("TIMER");
 
@@ -8,7 +9,7 @@ Timers::Timers(QObject *parent) :
     QObject(parent)
 {
     timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(tick()));
+    connect(timer, &QTimer::timeout, this, &Timers::tick);
     timer->start(1000);
 }
 
@@ -16,10 +17,14 @@ Timers::~Timers() {
     timer->stop();
 }
 
-void Timers::setState(
-	QString service,
-	QString id,
-	QString value
+void Timers::kill()
+{
+	QCoreApplication::exit();
+}
+
+void Timers::setState(const QString &service,
+	const QString &id,
+	const QString &value
 ) {
 	bool parseOk = false;
 	int seconds = value.toInt(&parseOk);
@@ -29,9 +34,8 @@ void Timers::setState(
 	}
 }
 
-void Timers::updateState(
-	QString service,
-	QString id
+void Timers::updateState(const QString &service,
+	const QString &id
 ) {
 	if ((service == TIMER) && active.contains(id)) {
 		emit stateChange(TIMER, id, QString::number(active[id]));

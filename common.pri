@@ -8,6 +8,11 @@ CONFIG   -= app_bundle
 
 TEMPLATE = app
 
+DBUS_ADAPTORS += ../automation.xml
+
+HEADERS += \
+    ../ha_common.h
+
 DEFINES += DBUS_ID=\\\"$${DBUS_ID}\\\"
 DBUS_NAME = com.jkearney.HA.$${DBUS_ID}
 DBUS_SERVICE = $${DBUS_NAME}.service

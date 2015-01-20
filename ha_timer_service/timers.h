@@ -16,12 +16,13 @@ public:
     ~Timers();
 
 signals:
-    void announce(QString service, QString info);
-    void stateChange(QString service, QString id, QString value);
+    void announce(const QString &service, const QString &info);
+    void stateChange(const QString &service, const QString &id, const QString &value);
 
 public slots:
-    void setState(QString service, QString id, QString value);
-	void updateState(QString service, QString id);
+	void kill();
+	void setState(const QString &service, const QString &id, const QString &value);
+	void updateState(const QString &service, const QString &id);
 
 private slots:
     void tick();

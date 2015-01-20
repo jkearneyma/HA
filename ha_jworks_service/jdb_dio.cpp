@@ -5,6 +5,7 @@
 #include <QStringList>
 #include <QtDBus>
 #include <iostream>
+#include <QCoreApplication>
 
 JSB_DIO::JSB_DIO(
 	const JSBDesc &board_,
@@ -17,11 +18,6 @@ JSB_DIO::JSB_DIO(
 	lastInputs(0),
 	lastOutputs(0)
 {
-	QDBusConnection::sessionBus().registerObject(
-		"/",
-		this,
-		QDBusConnection::ExportAllSlots | QDBusConnection::ExportAllSignals
-	);
 	// blink LED on the board to show it's active
 	unsigned char returnData[board.JW_returnSize];
 	libusb_control_transfer(
@@ -31,32 +27,40 @@ JSB_DIO::JSB_DIO(
 		returnData, board.JW_returnSize, 0
 	);
 	// announce the device
+}
+
+JSB_DIO::~JSB_DIO() {
+}
+
+void JSB_DIO::doAnounce() {
 	emit announce(
 		"JWORKS",
 		device->serialNumber
 		+ " inputs=" + QString::number(board.numInputs)
 		+ " outputs=" + QString::number(board.numOutputs)
 		+ " dio=" + QString::number(board.numDIO)
-	);
+				);
 }
 
-JSB_DIO::~JSB_DIO() {
+void JSB_DIO::kill()
+{
+	QCoreApplication::exit();
 }
 
 void JSB_DIO::setState(
-	QString service,
-	QString id,
-	QString toState
+	const QString &module,
+	const QString &addr,
+	const QString &svalue
 ) {
 	uint number = 0, value = 0;
 	bool parseOk = false;
-	auto parsed = id.split("_");
+	auto parsed = addr.split("_");
 	if (
 		(parsed.size() == 3)
-		&& (service == "JWORKS")
+		&& (module == "JWORKS")
 		&& (parsed[0] == device->serialNumber)
 		&& ((number = parsed[2].toUInt(&parseOk)), parseOk)
-		&& ((value = toState.toUInt(&parseOk)), parseOk)
+		&& ((value = svalue.toUInt(&parseOk)), parseOk)
 	) {
 		uint8_t relay = uint16_t(1) << number;
 		uint8_t newOutputs = (value != 0)
@@ -74,6 +78,13 @@ void JSB_DIO::setState(
 //		else if ((parsed[1] == "D") && (board.JW_setOutByBankCmd != 0)) {
 //		}
 	}
+}
+
+void JSB_DIO::updateState(
+	const QString &module,
+	const QString &/*addr*/
+) {
+	if (module == "JWORKS") update();
 }
 
 void JSB_DIO::update() {

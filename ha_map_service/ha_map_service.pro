@@ -12,4 +12,10 @@ DBUS_ID = Map
 
 TARGET = ha_map_service
 
-SOURCES += main.cpp
+DBUS_INTERFACES += ../automation.xml
+
+SOURCES += main.cpp \
+    map.cpp
+
+HEADERS += \
+    map.h
